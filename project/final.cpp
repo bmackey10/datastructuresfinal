@@ -1,2 +1,5 @@
-hi
-My name is Connor and I like to kill ducks
+int main()
+{
+  std::cout<<"hi"<<std::endl;
+  
+} 
