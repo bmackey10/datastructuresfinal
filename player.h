@@ -4,17 +4,6 @@
 #include “deck.h”
 #include <algorithm>
 
-typedef struct Chips {
-
-  int white;
-  int red;
-  int blue;
-  int green;
-
-  int total = (white * 1) + (red * 5) + (blue * 10) + (green * 25);
-
-} Chips ;
-
 enum rank {
 	HIGH_CARD,
 	PAIR,
@@ -39,7 +28,7 @@ class Player {
 
     int player_num;
 
-    chips player_chips;
+    int player_money;
 
     std::vector<Card> player_cards;
 
@@ -49,11 +38,9 @@ class Player {
 
     Player ();
 
-    void get_chips ();
-
     void fold ( std::vector<Card> player_cards, int player_num );
 
-    int bet ( chips player_chips );
+    int bet ( int bet_amt, bool bet_type, int highest_bet );
 
     std::vector<Card> get_player_cards () const;
 
