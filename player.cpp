@@ -82,3 +82,10 @@ std::vector<Card> get_player_cards () const {
   return player_cards;
 
 }
+
+bool Player::card_sorter( Card const& lhs, Card const& rhs ) {
+  if (lhs.number != rhs.number)
+    return lhs.number < rhs.number;
+  else
+    return lhs.number == rhs.number;
+}
