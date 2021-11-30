@@ -25,7 +25,7 @@ void fold ( std::vector<Card> player_cards, int player_num ) {
 
 }
 
-int bet ( chips player_chips ) { // work on this logic
+int bet ( chips player_chips ) { // work on this logic // number bet amount, 0 / 1
 
   int bet_amt;
 
