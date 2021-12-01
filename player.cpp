@@ -54,9 +54,11 @@ Hand Player::find_hand()
   best_hand.first = cards[0].number;
   best_hand.second = cards[1].number;
 
-  std::vector<int> suitCount;
-  bool flush;
-  int index;
+  std::vector<int> suitCount (5, 0);
+  int consecutive = 1;
+  int start = 0;
+  //bool flush;
+  //int index;
 
 // Should I return each time a hand is found?
   if (cards.size() == 2) {
@@ -72,13 +74,14 @@ Hand Player::find_hand()
     if(cards[0].number == cards[3].number || cards[1].number == cards[4].number) {
       best_hand.the_rank = FOUR_OF_A_KIND;
       best_hand.first = cards[1].number; // Will always correspond to one with four of a kind
-      if (cards[0] == cards[1])
+      if (cards[0].number == cards[1].number)
         best_hand.second = cards[4].number;
       else
         best_hand.second = cards[0].number;
-
-      return best_hand; // Returns right when a four of a kind is found.
     }
+
+    return best_hand; // Returns right when a four of a kind is found.
+
 
 // Check for pairs, three of a kind, and full houses
     for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
@@ -97,6 +100,7 @@ Hand Player::find_hand()
             continue;
           }
         }
+      }
       if(cards[iter].number == cards[iter + 1].number) {
         if (best_hand.the_rank == THREE_OF_A_KIND) {
           best_hand.the_rank = FULL_HOUSE;
@@ -107,9 +111,11 @@ Hand Player::find_hand()
           best_hand.the_rank = TWO_PAIR;
           best_hand.second = cards[iter].number;
         }
-      else if(cards[iter] == cards[iter + 1]) {
-        best_hand.the_rank = PAIR;
-        best_hand.first = cards[iter];
+        else {
+          best_hand.the_rank = PAIR;
+          best_hand.first = cards[iter];
+        }
+      }
     }
 
 // Could move this out of the if if we could figure out how to not overwrite best hand.
@@ -133,6 +139,190 @@ Hand Player::find_hand()
     }
 
     return best_hand;
+  }
+
+  else if (cards.size() == 6) {
+    if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number) {
+      best_hand.the_rank = FOUR_OF_A_KIND;
+      best_hand.first = cards[2].number; // Will always correspond to one with four of a kind
+      if (cards[0].number == cards[1].number)
+        best_hand.second = cards[4].number;
+      else
+        best_hand.second = cards[0].number;
+
+      return best_hand; // Returns right when a four of a kind is found.
+    }
+
+// Copied from size == 5; I don't think we can make it so we only use it once
+    for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+      if (iter + 2 < cards.size()) {
+        if (cards[iter].number == cards[iter + 2].number) {
+          if (best_hand.the_rank == PAIR) {
+            best_hand.the_rank = FULL_HOUSE;
+            best_hand.second = best_hand.first;
+            best_hand.first = cards[iter].number;
+            return best_hand;
+          }
+          else {
+            best_hand.the_rank = THREE_OF_A_KIND;
+            best_hand.first = cards[iter].number;
+            iter++; // Skip over the next iteration since it was accounted for
+            continue;
+          }
+        }
+      }
+      if(cards[iter].number == cards[iter + 1].number) {
+        if (best_hand.the_rank == THREE_OF_A_KIND) {
+          best_hand.the_rank = FULL_HOUSE;
+          best_hand.second = cards[iter].number;
+          return best_hand;
+        }
+        else if (best_hand.the_rank == PAIR) {
+          best_hand.the_rank = TWO_PAIR;
+          best_hand.second = cards[iter].number;
+        }
+        else {
+          best_hand.the_rank = PAIR;
+          best_hand.first = cards[iter];
+        }
+      }
+
+      for (long unsigned int iter = 0; iter < cards.size(); iter++) {
+        int cur_suit = cards[iter].suit;
+        suitCount[cur_suit]++;
+        if (suitCount[cur_suit] >= 5) {
+          best_hand.the_rank = FLUSH;
+          if (cards[0].suit != cur_suit) { // In this case, the top card for the flush is the second highest ranked card.
+            best_hand.first = cards[1].number;
+            best_hand.second = cards[2].number;
+          }
+          else if (cards[1].suit != cur_suit) {
+            best_hand.second = cards[2].number;
+          }
+          return best_hand;
+        }
+      }
+
+      for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+        if (cards[iter].number == cards[iter + 1].number) continue;
+        else if (cards[iter].number != cards[iter + 1].number + 1) {
+          consecutive = 1;
+          start = iter + 1; // Starts straight at iter + 1
+          continue; // Moves to the next iteration of the loop
+        }
+
+        consecutive++;
+
+        if (consecutive >= 5) {
+          best_hand.the_rank = STRAIGHT;
+          best_hand.first = cards[start].number;
+          best_hand.second = cards[start + 1].number; // Will create a situation with 7 as first and second if cards are 7, 7, 6, 5, 4, 3
+          return best_hand;
+        }
+      }
+
+      return best_hand;
+    }
+
+  }
+
+  else if (cards.size() == 7) {
+    if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number || cards[3].number == cards[6].number) {
+      best_hand.the_rank = FOUR_OF_A_KIND;
+      best_hand.first = cards[3].number; // Will always correspond to one with four of a kind
+      if (cards[0].number == cards[1].number)
+        best_hand.second = cards[4].number;
+      else
+        best_hand.second = cards[0].number;
+
+      return best_hand; // Returns right when a four of a kind is found.
+    }
+
+// Copied from size == 5; I don't think we can make it so we only use it once
+    for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+      if (iter + 2 < cards.size()) {
+        if (cards[iter].number == cards[iter + 2].number) {
+          if (best_hand.the_rank == PAIR) {
+            best_hand.the_rank = FULL_HOUSE;
+            best_hand.second = best_hand.first;
+            best_hand.first = cards[iter].number;
+            return best_hand;
+          }
+          else {
+            best_hand.the_rank = THREE_OF_A_KIND;
+            best_hand.first = cards[iter].number;
+            iter++; // Skip over the next iteration since it was accounted for
+            continue;
+          }
+        }
+      }
+      if(cards[iter].number == cards[iter + 1].number) {
+        if (best_hand.the_rank == THREE_OF_A_KIND) {
+          best_hand.the_rank = FULL_HOUSE;
+          best_hand.second = cards[iter].number;
+          return best_hand;
+        }
+        else if (best_hand.the_rank == PAIR) {
+          best_hand.the_rank = TWO_PAIR;
+          best_hand.second = cards[iter].number;
+        }
+        else {
+          best_hand.the_rank = PAIR;
+          best_hand.first = cards[iter];
+        }
+      }
+    }
+
+// Could alternatively use a bitset or a hash for flush determination
+    for (long unsigned int iter = 0; iter < cards.size(); iter++) {
+      int cur_suit = cards[iter].suit;
+      suitCount[cur_suit]++; // Shouldn't be an issue but might need to reset suitCount at beginning of for loop.
+      if (suitCount[cur_suit] >= 5) {
+        best_hand.the_rank = FLUSH;
+        if (cards[0].suit != cur_suit) { // In this case, the top card for the flush is the second highest ranked card.
+          if (cards[1].suit != cur_suit) {
+            best_hand.first = cards[2].number;
+            best_hand.second = cards[3].number;
+          }
+          else {
+            best_hand.first = cards[1].number;
+            if (cards[2].suit != cur_suit)
+              best_hand.second = cards[3].number;
+            else
+              best_hand.second = cards[2].number;
+          }
+        }
+        else if (cards[1].suit != cur_suit) {
+          if (cards[2].suit != cur_suit)
+            best_hand.second = cards[3].number;
+          else
+            best_hand.second = cards[2].number
+        }
+
+        return best_hand;
+      }
+    }
+
+    for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+      if (cards[iter].number == cards[iter + 1].number) continue;
+      else if (cards[iter].number != cards[iter + 1].number + 1) {
+        consecutive = 1;
+        start = iter + 1; // Starts straight at iter + 1
+        continue;
+      }
+
+      consecutive++;
+
+      if (consecutive >= 5) {
+        best_hand.the_rank = STRAIGHT;
+        best_hand.first = cards[start].number;
+        best_hand.second = cards[start + 1].number; // Will create a situation with 7 as first and second if cards are 10, 7, 7, 6, 5, 4, 3
+        return best_hand;
+      }
+    }
+
+    return best_hand;
+
   }
 
 }
