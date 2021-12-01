@@ -82,7 +82,10 @@ Card Deck::deal_to_player()
 {
   srand(time(NULL));
 
-  int index = rand() % 53;  // number between 0-52
+  do {
+    int index = rand() % 52;
+  }
+  while ( deck_hash[index] == false );
 
   deck_hash[index] = false;
 
@@ -97,7 +100,10 @@ Card Deck::deal_to_table()
 {
   srand(time(NULL));
 
-  int index = rand() % 53;
+  do {
+    int index = rand() % 52;
+  }
+  while ( deck_hash[index] == false );
 
   deck_hash[index] = false;
   table_cards.push_back(the_deck.at(index));
