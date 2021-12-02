@@ -41,9 +41,17 @@ class Player {
 
     std::vector<Card> get_player_cards () const;
 
+		std::string enum_to_string_rank(rank type) const;
+
+		std::string enum_to_string_card(int type) const;
+
+		std::string enum_to_string_suit(int type) const;
+
     bool card_sorter( Card const& lhs, Card const& rhs );
 
-    Hand find_hand( std::vector<Card> table_cards );
+    Hand find_hand( std::vector<Card> table_cards ) const;
+
+		friend std::ostream& operator<<( std::ostream& out, const Player& X );
 
     //void update_hand();
 

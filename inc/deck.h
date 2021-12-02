@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <stdlib.h>
+#include <string>
 
 struct Card {
 
@@ -37,6 +38,12 @@ class Deck {
     Card deal_to_table();
 
     std::vector<Card> get_table_cards();
+
+    std::string enum_to_string_card(int type) const;
+
+		std::string enum_to_string_suit(int type) const;
+
+    friend std::ostream& operator<<( std::ostream& out, const Deck& X );
 };
 
 
