@@ -153,7 +153,7 @@ std::vector<Card> Deck::get_table_cards()
 
 std::ostream& operator<<( std::ostream& out, const Deck& X ) {
 
-  out << "Table Cards: ";
+  out << "\nTable Cards: ";
 
   for (long unsigned int iter = 0; iter < X.table_cards.size(); iter++ ) {
     if (X.table_cards.at(iter).number > 10) {

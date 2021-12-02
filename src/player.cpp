@@ -108,11 +108,11 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
 	std::sort(cards.begin(), cards.end(), [](Card a, Card b) { return a.number > b.number; } );
   //std::sort(cards.begin(), cards.end(), &Player::card_sorter);
 
-/*
-	for (int i = 0; i < cards.size(); i++) {
+
+	/* for (int i = 0; i < cards.size(); i++) {
 		std::cout << cards.at(i).number << " " << cards.at(i).suit << std::endl;
-	}
-*/
+	} */
+
 
 
   Hand best_hand; // best_hand is always returned
