@@ -1,5 +1,59 @@
 #include "../inc/player.h"
 
+std::string Player::enum_to_string_rank(rank type) const {
+
+	switch (type) {
+		case HIGH_CARD:
+			return "High Card";
+		case PAIR:
+			return "Pair";
+		case TWO_PAIR:
+			return "Two Pair";
+		case THREE_OF_A_KIND:
+			return "Three of a Kind";
+		case STRAIGHT:
+			return "Straight";
+		case FLUSH:
+			return "Flush";
+		case FULL_HOUSE:
+			return "Full House";
+		case FOUR_OF_A_KIND:
+			return "Four of a Kind";
+		case STRAIGHT_FLUSH:
+			return "Straight Flush";
+	}
+}
+
+std::string Player::enum_to_string_card(int type) const {
+
+  switch (type) {
+		case 11:
+			return "Jack";
+		case 12:
+			return "Queen";
+		case 13:
+			return "King";
+		case 14:
+      return "Ace";
+  }
+
+}
+
+std::string Player::enum_to_string_suit(int type) const {
+
+  switch (type) {
+		case 1:
+			return "Hearts";
+		case 2:
+			return "Diamonds";
+		case 3:
+			return "Clubs";
+		case 4:
+      return "Spades";
+  }
+
+}
+
 Player::Player( ) : player_num( ), player_money( 100 ), player_cards( ), cur_hand( ) {}
 
 void Player::fold ( std::vector<Card> player_cards, int player_num ) {
@@ -44,7 +98,7 @@ bool Player::card_sorter( Card const& lhs, Card const& rhs ) {
 }
 */
 
-Hand Player::find_hand( std::vector<Card> table_cards )
+Hand Player::find_hand( std::vector<Card> table_cards ) const
 {
   std::vector<Card> cards = get_player_cards();
 
@@ -54,10 +108,11 @@ Hand Player::find_hand( std::vector<Card> table_cards )
 	std::sort(cards.begin(), cards.end(), [](Card a, Card b) { return a.number > b.number; } );
   //std::sort(cards.begin(), cards.end(), &Player::card_sorter);
 
-
+/*
 	for (int i = 0; i < cards.size(); i++) {
 		std::cout << cards.at(i).number << " " << cards.at(i).suit << std::endl;
 	}
+*/
 
 
   Hand best_hand; // best_hand is always returned
@@ -344,3 +399,38 @@ void Player::update_hand() {
 */
 
 //Hand Player::get_hand() const {}
+
+std::ostream& operator<<( std::ostream& out, const Player& X ){
+
+  std::vector<Card> table_cards; // figure out how to access table cards within this method
+
+  out << "Player " << X.player_num << ": \n\tChips: " << X.player_money << "\n\tCards: ";
+
+  for (long unsigned int iter = 0; iter < 2; iter++ ) {
+    if (X.player_cards.at(iter).number > 10) {
+      out << X.enum_to_string_card(X.player_cards.at(iter).number) << " of " << X.enum_to_string_suit(X.player_cards.at(iter).suit);
+    } else {
+      out << X.player_cards.at(iter).number << " of " << X.enum_to_string_suit(X.player_cards.at(iter).suit);
+    }
+
+    if (iter == 0) {
+      out << "\n\t       ";
+    }
+  }
+
+  out << "\n\tHand: " << X.enum_to_string_rank(X.find_hand(table_cards).the_rank) << "\n\tHighest Cards: ";
+
+  if (X.find_hand(table_cards).first > 10) {
+    out << X.enum_to_string_card(X.find_hand(table_cards).first) << ", ";
+  } else {
+    out << X.find_hand(table_cards).first << ", ";
+  }
+
+  if (X.find_hand(table_cards).second > 10) {
+    out << X.enum_to_string_card(X.find_hand(table_cards).second);
+  } else {
+    out << X.find_hand(table_cards).second;
+  }
+
+	return out;
+}

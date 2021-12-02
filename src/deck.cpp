@@ -1,5 +1,35 @@
 #include "../inc/deck.h"
 
+std::string Deck::enum_to_string_card(int type) const {
+
+  switch (type) {
+		case 11:
+			return "Jack";
+		case 12:
+			return "Queen";
+		case 13:
+			return "King";
+		case 14:
+      return "Ace";
+  }
+
+}
+
+std::string Deck::enum_to_string_suit(int type) const {
+
+  switch (type) {
+		case 1:
+			return "Hearts";
+		case 2:
+			return "Diamonds";
+		case 3:
+			return "Clubs";
+		case 4:
+      return "Spades";
+  }
+
+}
+
 /*
 * initialize members of card with default constructors
 */
@@ -14,11 +44,11 @@ Deck::Deck() : the_deck(), deck_hash(), table_cards(), pot()
   Card cards[52];
 
   // initialize card numbers in deck
-  int i = 0, number = 1;
+  int i = 0, number = 2;
   while (i < 52)
   {
-    if (number > 13)
-      number = 1;
+    if (number > 14)
+      number = 2;
 
     cards[i].number = number;
 
@@ -100,7 +130,7 @@ at that index to the table_cards vector, and returns the card at that index
 Card Deck::deal_to_table()
 {
   srand(time(NULL));
-  
+
   int index;
   do {
     index = rand() % 52;
@@ -119,4 +149,26 @@ Card Deck::deal_to_table()
 std::vector<Card> Deck::get_table_cards()
 {
   return table_cards;
+}
+
+std::ostream& operator<<( std::ostream& out, const Deck& X ) {
+
+  out << "Table Cards: ";
+
+  for (long unsigned int iter = 0; iter < X.table_cards.size(); iter++ ) {
+    if (X.table_cards.at(iter).number > 10) {
+      out << X.enum_to_string_card(X.table_cards.at(iter).number) << " of " << X.enum_to_string_suit(X.table_cards.at(iter).suit);
+    } else {
+      out << X.table_cards.at(iter).number << " of " << X.enum_to_string_suit(X.table_cards.at(iter).suit);
+    }
+
+    if (iter < (X.table_cards.size() - 1)) {
+      out << "\n             ";
+    }
+  }
+
+  out << "\nPot: " << X.pot;
+
+  return out;
+
 }
