@@ -16,20 +16,13 @@ struct Card {
 
 class Deck {
 
-  private:
+  public:
 
     std::vector<Card> the_deck;
-
-    // need to rethink how to implement deck_hash
-    // as of now its key is index of card in vector and value is boolean
-    // how do we say "is the ace of hearts in the deck" in O(1) time
     std::unordered_map<int, bool> deck_hash;
     std::vector<Card> table_cards;
 
     int pot;
-
-
-  public:
 
     Deck();
 

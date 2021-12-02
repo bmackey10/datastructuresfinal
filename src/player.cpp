@@ -10,7 +10,7 @@ void Player::fold ( std::vector<Card> player_cards, int player_num ) {
 
 }
 
-int Player::bet ( int bet_amt, bool bet_type, int highest_bet, int pot  ) { // need to take highest bid input
+int Player::bet ( int bet_amt, bool bet_type, int highest_bet ) { // need to take highest bid input
 
   if ( bet_type == 0 ) { // check
 
@@ -22,7 +22,7 @@ int Player::bet ( int bet_amt, bool bet_type, int highest_bet, int pot  ) { // n
 
   }
 
-  pot = pot + bet_amt;
+  return bet_amt;
 
 }
 
@@ -54,6 +54,12 @@ Hand Player::find_hand( std::vector<Card> table_cards )
 	std::sort(cards.begin(), cards.end(), [](Card a, Card b) { return a.number > b.number; } );
   //std::sort(cards.begin(), cards.end(), &Player::card_sorter);
 
+
+	for (int i = 0; i < cards.size(); i++) {
+		std::cout << cards.at(i).number << " " << cards.at(i).suit << std::endl;
+	}
+
+
   Hand best_hand; // best_hand is always returned
 
   best_hand.the_rank = HIGH_CARD;
@@ -70,8 +76,8 @@ Hand Player::find_hand( std::vector<Card> table_cards )
   if (cards.size() == 2) {
     if(cards[0].number == cards[1].number) {
       best_hand.the_rank = PAIR;
-      return best_hand;
-    }
+     }
+	return best_hand;
   }
 
 // Not considering the case where cards would be a size it shouldn't be
@@ -84,10 +90,8 @@ Hand Player::find_hand( std::vector<Card> table_cards )
         best_hand.second = cards[4].number;
       else
         best_hand.second = cards[0].number;
+	  return best_hand;
     }
-
-    return best_hand; // Returns right when a four of a kind is found.
-
 
 // Check for pairs, three of a kind, and full houses
     for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
@@ -101,7 +105,7 @@ Hand Player::find_hand( std::vector<Card> table_cards )
           }
           else {
             best_hand.the_rank = THREE_OF_A_KIND;
-            best_hand.first = cards[iter].number;
+            best_hand.first = cards[iter].number; // Check for second card
             iter++; // Skip over the next iteration since it was accounted for
             continue;
           }
@@ -161,7 +165,7 @@ Hand Player::find_hand( std::vector<Card> table_cards )
 
 // Copied from size == 5; I don't think we can make it so we only use it once
     for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
-      if (iter + 2 < cards.size()) {
+	  if (iter + 2 < cards.size()) {
         if (cards[iter].number == cards[iter + 2].number) {
           if (best_hand.the_rank == PAIR) {
             best_hand.the_rank = FULL_HOUSE;
@@ -177,6 +181,7 @@ Hand Player::find_hand( std::vector<Card> table_cards )
           }
         }
       }
+
       if(cards[iter].number == cards[iter + 1].number) {
         if (best_hand.the_rank == THREE_OF_A_KIND) {
           best_hand.the_rank = FULL_HOUSE;
@@ -192,6 +197,7 @@ Hand Player::find_hand( std::vector<Card> table_cards )
           best_hand.first = cards[iter].number;
         }
       }
+	}
 
       for (long unsigned int iter = 0; iter < cards.size(); iter++) {
         int cur_suit = cards[iter].suit;
@@ -229,8 +235,6 @@ Hand Player::find_hand( std::vector<Card> table_cards )
 
       return best_hand;
     }
-
-  }
 
   else if (cards.size() == 7) {
     if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number || cards[3].number == cards[6].number) {

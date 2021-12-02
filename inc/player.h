@@ -23,9 +23,9 @@ typedef struct Hand {
 
 class Player {
 
-  private:
+  public:
 
-    int player_num;
+	int player_num;
 
     int player_money;
 
@@ -33,13 +33,11 @@ class Player {
 
     Hand cur_hand;
 
-  public:
-
     Player ();
 
     void fold ( std::vector<Card> player_cards, int player_num );
 
-    int bet ( int bet_amt, bool bet_type, int highest_bet, int pot );
+    int bet ( int bet_amt, bool bet_type, int highest_bet );
 
     std::vector<Card> get_player_cards () const;
 
