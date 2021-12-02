@@ -1,8 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include “deck.h”
-#include <algorithm>
+#include "deck.h"
 
 enum rank {
 	HIGH_CARD,
@@ -24,7 +23,7 @@ typedef struct Hand {
 
 class Player {
 
-public:
+  private:
 
     int player_num;
 
@@ -34,19 +33,21 @@ public:
 
     Hand cur_hand;
 
+  public:
+
     Player ();
 
     void fold ( std::vector<Card> player_cards, int player_num );
 
-    int bet ( int bet_amt, bool bet_type, int highest_bet );
+    int bet ( int bet_amt, bool bet_type, int highest_bet, int pot );
 
     std::vector<Card> get_player_cards () const;
 
     bool card_sorter( Card const& lhs, Card const& rhs );
 
-    Hand find_hand();
+    Hand find_hand( std::vector<Card> table_cards );
 
-    void update_hand();
+    //void update_hand();
 
     //Hand get_hand() const;
 
