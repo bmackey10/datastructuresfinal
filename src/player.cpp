@@ -402,7 +402,7 @@ void Player::update_hand() {
 
 std::ostream& operator<<( std::ostream& out, const Player& X ){
 
-  std::vector<Card> table_cards; // figure out how to access table cards within this method
+  std::vector<Card> table_cards;
 
   out << "Player " << X.player_num << ": \n\tChips: " << X.player_money << "\n\tCards: ";
 
@@ -418,7 +418,7 @@ std::ostream& operator<<( std::ostream& out, const Player& X ){
     }
   }
 
-  out << "\n\tHand: " << X.enum_to_string_rank(X.find_hand(table_cards).the_rank) << "\n\tHighest Cards: ";
+  out << "\n\tHand: " << X.enum_to_string_rank(X.cur_hand) << "\n\tHighest Cards: ";
 
   if (X.find_hand(table_cards).first > 10) {
     out << X.enum_to_string_card(X.find_hand(table_cards).first) << ", ";
