@@ -153,6 +153,12 @@ std::vector<Card> Deck::get_table_cards()
 
 std::ostream& operator<<( std::ostream& out, const Deck& X ) {
 
+  out << "\n";
+
+  for (long unsigned int iter = 0; iter < 10; iter++ ) {
+    out << "----------";
+  };
+
   out << "\nTable Cards: ";
 
   for (long unsigned int iter = 0; iter < X.table_cards.size(); iter++ ) {
@@ -163,7 +169,7 @@ std::ostream& operator<<( std::ostream& out, const Deck& X ) {
     }
 
     if (iter < (X.table_cards.size() - 1)) {
-      out << "\n             ";
+      out << ", ";
     }
   }
 

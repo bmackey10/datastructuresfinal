@@ -54,7 +54,7 @@ std::string Player::enum_to_string_suit(int type) const {
 
 }
 
-Player::Player( ) : player_num( ), player_money( 100 ), player_cards( ), cur_hand( ) {}
+Player::Player( int i ) : player_num( i ), player_money( 100 ), player_cards( ), cur_hand( ) {}
 
 void Player::fold ( std::vector<Card> player_cards, int player_num ) {
 
@@ -66,17 +66,19 @@ void Player::fold ( std::vector<Card> player_cards, int player_num ) {
 
 int Player::bet ( int bet_amt, bool bet_type, int highest_bet ) { // need to take highest bid input
 
-  if ( bet_type == 0 ) { // check
+  if ( bet_type == 0 ) { // call
 
     player_money = player_money - highest_bet;
 
-  } else if ( bet_type == 1 ) { // bet
+		bet_amt = highest_bet;
+
+  } else if ( bet_type == 1 ) { // bet / raise
 
     player_money = player_money - bet_amt;
 
   }
 
-  return bet_amt;
+	return bet_amt;
 
 }
 
@@ -402,9 +404,11 @@ void Player::update_hand() {
 
 std::ostream& operator<<( std::ostream& out, const Player& X ){
 
+	out << "\n";
+
   std::vector<Card> table_cards;
 
-  out << "Player " << X.player_num << ": \n\tChips: " << X.player_money << "\n\tCards: ";
+  out << "Player " << X.player_num << " | ";
 
   for (long unsigned int iter = 0; iter < 2; iter++ ) {
     if (X.player_cards.at(iter).number > 10) {
@@ -414,11 +418,15 @@ std::ostream& operator<<( std::ostream& out, const Player& X ){
     }
 
     if (iter == 0) {
-      out << "\n\t       ";
-    }
+      out << ", ";
+    } else {
+			out << "\t\t";
+		}
   }
 
-  out << "\n\tHand: " << X.enum_to_string_rank(X.cur_hand) << "\n\tHighest Cards: ";
+	out << X.player_money << "\t";
+
+  out << X.enum_to_string_rank(X.cur_hand.the_rank) << "\t\t";
 
   if (X.find_hand(table_cards).first > 10) {
     out << X.enum_to_string_card(X.find_hand(table_cards).first) << ", ";

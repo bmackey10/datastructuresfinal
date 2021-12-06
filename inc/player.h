@@ -33,7 +33,7 @@ class Player {
 
     Hand cur_hand;
 
-    Player ();
+    Player ( int i );
 
     void fold ( std::vector<Card> player_cards, int player_num );
 
