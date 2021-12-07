@@ -106,9 +106,7 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
 
   cards.insert(cards.end(), table_cards.begin(), table_cards.end());
 
-
 	std::sort(cards.begin(), cards.end(), [](Card a, Card b) { return a.number > b.number; } );
-  //std::sort(cards.begin(), cards.end(), &Player::card_sorter);
 
 
 	/* for (int i = 0; i < cards.size(); i++) {
@@ -120,16 +118,19 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
   Hand best_hand; // best_hand is always returned
 
   best_hand.the_rank = HIGH_CARD;
-  best_hand.first = cards[0].number;
-  best_hand.second = cards[1].number;
+	if (player_cards[0].number > player_cards[1].number) {
+  	best_hand.first = player_cards[0].number;
+  	best_hand.second = player_cards[1].number;
+	}
+	else {
+		best_hand.first = player_cards[1].number;
+		best_hand.second = player_cards[0].number;
+	}
 
   std::vector<int> suitCount (5, 0);
   int consecutive = 1;
   int start = 0;
-  //bool flush;
-  //int index;
 
-// Should I return each time a hand is found?
   if (cards.size() == 2) {
     if(cards[0].number == cards[1].number) {
       best_hand.the_rank = PAIR;
@@ -139,7 +140,16 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
 
 // Not considering the case where cards would be a size it shouldn't be
   else if (cards.size() == 5) {
-    // Need to calculate straight flush here
+
+		for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+			if (cards[iter].number != cards[iter + 1].number + 1 || cards[iter].suit != cards[iter + 1].suit)
+        break;
+      if (iter == cards.size() - 2) {
+        best_hand.the_rank = STRAIGHT_FLUSH;
+        return best_hand;
+      }
+    }
+
     if(cards[0].number == cards[3].number || cards[1].number == cards[4].number) {
       best_hand.the_rank = FOUR_OF_A_KIND;
       best_hand.first = cards[1].number; // Will always correspond to one with four of a kind
@@ -180,7 +190,10 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
         }
         else {
           best_hand.the_rank = PAIR;
-          best_hand.first = cards[iter].number;
+					if (cards[iter].number != best_hand.first) {
+						best_hand.second = best_hand.first;
+						best_hand.first = cards[iter].number;
+					}
         }
       }
     }
@@ -209,7 +222,25 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
   }
 
   else if (cards.size() == 6) {
-    if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number) {
+
+		for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+			if (cards[iter].number != cards[iter + 1].number + 1 || cards[iter].suit != cards[iter + 1].suit) {
+				consecutive = 1;
+				start = iter + 1; // Starts straight at iter + 1
+				continue; // Moves to the next iteration of the loop
+			}
+
+			consecutive++;
+
+			if (consecutive >= 5) {
+				best_hand.the_rank = STRAIGHT_FLUSH;
+				best_hand.first = cards[start].number;
+				best_hand.second = cards[start + 1].number;
+				return best_hand;
+			}
+    }
+
+		if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number) {
       best_hand.the_rank = FOUR_OF_A_KIND;
       best_hand.first = cards[2].number; // Will always correspond to one with four of a kind
       if (cards[0].number == cards[1].number)
@@ -251,7 +282,10 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
         }
         else {
           best_hand.the_rank = PAIR;
-          best_hand.first = cards[iter].number;
+					if (cards[iter].number != best_hand.first) {
+						best_hand.second = best_hand.first;
+						best_hand.first = cards[iter].number;
+					}
         }
       }
 	}
@@ -285,7 +319,7 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
         if (consecutive >= 5) {
           best_hand.the_rank = STRAIGHT;
           best_hand.first = cards[start].number;
-          best_hand.second = cards[start + 1].number; // Will create a situation with 7 as first and second if cards are 7, 7, 6, 5, 4, 3
+          best_hand.second = cards[start + 1].number;
           return best_hand;
         }
       }
@@ -294,7 +328,25 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
     }
 
   else if (cards.size() == 7) {
-    if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number || cards[3].number == cards[6].number) {
+
+		for (long unsigned int iter = 0; iter < cards.size() - 1; iter++) {
+			if (cards[iter].number != cards[iter + 1].number + 1 || cards[iter].suit != cards[iter + 1].suit) {
+				consecutive = 1;
+				start = iter + 1; // Starts straight at iter + 1
+				continue; // Moves to the next iteration of the loop
+			}
+
+			consecutive++;
+
+			if (consecutive >= 5) {
+				best_hand.the_rank = STRAIGHT_FLUSH;
+				best_hand.first = cards[start].number;
+				best_hand.second = cards[start + 1].number;
+				return best_hand;
+			}
+    }
+
+		if(cards[0].number == cards[3].number || cards[1].number == cards[4].number || cards[2].number == cards[5].number || cards[3].number == cards[6].number) {
       best_hand.the_rank = FOUR_OF_A_KIND;
       best_hand.first = cards[3].number; // Will always correspond to one with four of a kind
       if (cards[0].number == cards[1].number)
@@ -335,7 +387,10 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
         }
         else {
           best_hand.the_rank = PAIR;
-          best_hand.first = cards[iter].number;
+					if (cards[iter].number != best_hand.first) {
+						best_hand.second = best_hand.first;
+						best_hand.first = cards[iter].number;
+					}
         }
       }
     }
@@ -383,7 +438,7 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
       if (consecutive >= 5) {
         best_hand.the_rank = STRAIGHT;
         best_hand.first = cards[start].number;
-        best_hand.second = cards[start + 1].number; // Will create a situation with 7 as first and second if cards are 10, 7, 7, 6, 5, 4, 3
+        best_hand.second = cards[start + 1].number;
         return best_hand;
       }
     }
@@ -396,9 +451,10 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
 
 /*
 void Player::update_hand() {
-  cur_hand = find_hand(); // Does this work?
+  cur_hand = find_hand(get_table_cards());
 }
 */
+
 
 //Hand Player::get_hand() const {}
 
@@ -428,16 +484,16 @@ std::ostream& operator<<( std::ostream& out, const Player& X ){
 
   out << X.enum_to_string_rank(X.cur_hand.the_rank) << "\t\t";
 
-  if (X.find_hand(table_cards).first > 10) {
-    out << X.enum_to_string_card(X.find_hand(table_cards).first) << ", ";
+  if (X.cur_hand.first > 10) {
+    out << X.enum_to_string_card(X.cur_hand.first) << ", ";
   } else {
-    out << X.find_hand(table_cards).first << ", ";
+    out << X.cur_hand.first << ", ";
   }
 
-  if (X.find_hand(table_cards).second > 10) {
-    out << X.enum_to_string_card(X.find_hand(table_cards).second);
+  if (X.cur_hand.second > 10) {
+    out << X.enum_to_string_card(X.cur_hand.second);
   } else {
-    out << X.find_hand(table_cards).second;
+    out << X.cur_hand.second;
   }
 
 	return out;
