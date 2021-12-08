@@ -1,9 +1,39 @@
-#include "deck.h"
+#include "../inc/deck.h"
+
+std::string Deck::enum_to_string_card(int type) const {
+
+  switch (type) {
+		case 11:
+			return "Jack";
+		case 12:
+			return "Queen";
+		case 13:
+			return "King";
+		case 14:
+      return "Ace";
+  }
+
+}
+
+std::string Deck::enum_to_string_suit(int type) const {
+
+  switch (type) {
+		case 1:
+			return "Hearts";
+		case 2:
+			return "Diamonds";
+		case 3:
+			return "Clubs";
+		case 4:
+      return "Spades";
+  }
+
+}
 
 /*
 * initialize members of card with default constructors
 */
-Card::Card() : number(), suit() {}
+//Card::Card() : number(), suit() {}
 
 /*
 * initialize cards in the deck by setting values 1-13 and suits 1-4
@@ -14,15 +44,15 @@ Deck::Deck() : the_deck(), deck_hash(), table_cards(), pot()
   Card cards[52];
 
   // initialize card numbers in deck
-  int i = 0, number = 1;
+  int i = 0, number = 2;
   while (i < 52)
   {
-    if (number > 13)
-      number = 1;
+    if (number > 14)
+      number = 2;
 
     cards[i].number = number;
 
-    ++number
+    ++number;
     ++i;
   }
 
@@ -82,7 +112,11 @@ Card Deck::deal_to_player()
 {
   srand(time(NULL));
 
-  int index = rand() % 53;  // number between 0-52
+  int index;
+  do {
+    index = rand() % 52;
+  }
+  while ( deck_hash[index] == false );
 
   deck_hash[index] = false;
 
@@ -97,7 +131,11 @@ Card Deck::deal_to_table()
 {
   srand(time(NULL));
 
-  int index = rand() % 53;
+  int index;
+  do {
+    index = rand() % 52;
+  }
+  while ( deck_hash[index] == false );
 
   deck_hash[index] = false;
   table_cards.push_back(the_deck.at(index));
@@ -108,7 +146,35 @@ Card Deck::deal_to_table()
 /*
 * returns a vector of the cards on the table
 */
-std::vector<Card> get_table_cards()
+std::vector<Card> Deck::get_table_cards()
 {
   return table_cards;
+}
+
+std::ostream& operator<<( std::ostream& out, const Deck& X ) {
+
+  out << "\n";
+
+  for (long unsigned int iter = 0; iter < 10; iter++ ) {
+    out << "----------";
+  };
+
+  out << "\nTable Cards: ";
+
+  for (long unsigned int iter = 0; iter < X.table_cards.size(); iter++ ) {
+    if (X.table_cards.at(iter).number > 10) {
+      out << X.enum_to_string_card(X.table_cards.at(iter).number) << " of " << X.enum_to_string_suit(X.table_cards.at(iter).suit);
+    } else {
+      out << X.table_cards.at(iter).number << " of " << X.enum_to_string_suit(X.table_cards.at(iter).suit);
+    }
+
+    if (iter < (X.table_cards.size() - 1)) {
+      out << ", ";
+    }
+  }
+
+  out << "\nPot: " << X.pot;
+
+  return out;
+
 }

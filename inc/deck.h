@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <stdlib.h>
+#include <string>
 
 struct Card {
 
@@ -16,20 +17,13 @@ struct Card {
 
 class Deck {
 
-  private:
+  public:
 
     std::vector<Card> the_deck;
-
-    // need to rethink how to implement deck_hash
-    // as of now its key is index of card in vector and value is boolean
-    // how do we say "is the ace of hearts in the deck" in O(1) time
     std::unordered_map<int, bool> deck_hash;
     std::vector<Card> table_cards;
 
     int pot;
-
-
-  public:
 
     Deck();
 
@@ -43,7 +37,13 @@ class Deck {
 
     Card deal_to_table();
 
+    std::string enum_to_string_card(int type) const;
+
+    std::string enum_to_string_suit(int type) const;
+
     std::vector<Card> get_table_cards();
+
+    friend std::ostream& operator<<( std::ostream& out, const Deck& X );
 };
 
 
