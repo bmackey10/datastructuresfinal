@@ -3,6 +3,28 @@
 
 #include "deck.h"
 
+const std::vector<std::vector<float>> probs_postflop = { 	{0, 58.6, 8.3, 1.4, 0, 0, 0, 0, 0}, // high card
+																													{0, 0, 40.2, 16.0, 0, 0, 1.7, 0.1, 0}, // pair
+																													{0, 0, 0, 0, 0, 0, 16.5, 0.2, 0}, 	// two pair
+																													{0, 0, 0, 0, 0, 0, 29.8, 43, 0},		// three of a Kind
+																													{0},																// straight
+																													{0},																// flush
+																													{0, 0, 0, 0, 0, 0, 0, 4.3, 0},			// full house
+																													{0, 0, 0, 0, 0, 0, 0, 0, 0}, 				// four of a Kind
+																									 				{0} };															// straight flush
+
+const std::vector<std::vector<float>> probs_postturn = { 	{0, 39.1, 0, 0, 0, 0, 0, 0, 0}, // high card
+																													{0, 0, 26.1, 4.3, 0, 0, 0, 0.1, 0}, // pair
+																													{0, 0, 0, 0, 0, 0, 8.7, 0, 0}, 	// two pair
+																													{0, 0, 0, 0, 0, 0, 19.6, 2.2, 0},		// three of a Kind
+																													{0},																// straight
+																													{0},																// flush
+																													{0, 0, 0, 0, 0, 0, 0, 2.2, 0},			// full house
+																													{0, 0, 0, 0, 0, 0, 0, 0, 0}, 				// four of a Kind
+																													{0} };															// straight flush
+
+
+
 enum rank {
 	HIGH_CARD,
 	PAIR,
@@ -53,9 +75,9 @@ class Player {
 
 		friend std::ostream& operator<<( std::ostream& out, const Player& X );
 
-    //void update_hand();
+		std::vector<float> calc_postflop( std::vector<Card> table_cards );
 
-    //Hand get_hand() const;
+		std::vector<float> calc_postturn( std::vector<Card> table_cards );
 
 } ;
 

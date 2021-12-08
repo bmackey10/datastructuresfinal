@@ -26,7 +26,16 @@ int main()
 	deck.table_cards.push_back(deck.deal_to_player());
 	deck.table_cards.push_back(deck.deal_to_player());
 	deck.table_cards.push_back(deck.deal_to_player());
-	deck.table_cards.push_back(deck.deal_to_player());
+	// deck.table_cards.push_back(deck.deal_to_player());
+	// deck.table_cards.push_back(deck.deal_to_player());
+
+
+
+/*
+	for (int i = 0; i < deck.table_cards.size(); i++) {
+		std::cout << deck.table_cards.at(i).number << " ";
+	}
+*/
 
 	/* std::cout << test_cards.at(0).number << " " << test_cards.at(0).suit << std::endl;
 	std::cout << test_cards.at(1).number << " " << test_cards.at(1).suit << std::endl;
@@ -36,12 +45,20 @@ int main()
 	std::cout << deck.table_cards.at(2).number << " " << deck.table_cards.at(2).suit << std::endl; */
 
 	p1.cur_hand = p1.find_hand(deck.table_cards);
-	p2.cur_hand = p2.find_hand(deck.table_cards);
-	p3.cur_hand = p3.find_hand(deck.table_cards);
+	// p2.cur_hand = p2.find_hand(deck.table_cards);
+	// p3.cur_hand = p3.find_hand(deck.table_cards);
+
+	std::vector<float> probs = p1.calc_postturn( deck.table_cards );
+
+	for ( int i = 0; i < probs.size(); ++i )
+	{
+		std::cout << probs.at(i) << " ";
+	}
+	std::cout << std::endl;
 
 	std::cout << p1;
-	std::cout << p2;
-	std::cout << p3;
+	// std::cout << p2;
+	// std::cout << p3;
 
 	std::cout << deck << std::endl;
 
