@@ -22,10 +22,10 @@ $(OBJ)/deck.o : $(SRC)/deck.cpp
 $(OBJ)/player.o : $(SRC)/player.cpp
 	$(PP) $(CXXFLAGS) -c $(SRC)/player.cpp -o $@
 
-$(OBJ)/simulation.o : $(SRC)/simulation.cpp
-	$(PP) $(CXXFLAGS) -c $(SRC)/simulation.cpp -o $@
+$(OBJ)/maintest.o : $(SRC)/maintest.cpp
+	$(PP) $(CXXFLAGS) -c $(SRC)/maintest.cpp -o $@
 
-sim_obj := $(OBJ)/deck.o $(OBJ)/player.o $(OBJ)/simulation.o
+sim_obj := $(OBJ)/deck.o $(OBJ)/player.o $(OBJ)/maintest.o
 
 simulation : $(sim_obj)
 	$(PP) $(CXXFLAGS) $(sim_obj) -o $(EXE)/simulation

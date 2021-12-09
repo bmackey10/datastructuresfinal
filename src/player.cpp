@@ -56,27 +56,9 @@ std::string Player::enum_to_string_suit(int type) const {
 
 Player::Player( int i ) : player_num( i ), player_money( 100 ), player_cards( ), cur_hand( ) {}
 
-void Player::fold ( std::vector<Card> player_cards, int player_num ) {
+int Player::bet ( int bet_amt ) { // need to take highest bid input
 
-  std::cout << "Player " << player_num << " has folded." << std::endl;
-
-  player_cards.clear();
-
-}
-
-int Player::bet ( int bet_amt, bool bet_type, int highest_bet ) { // need to take highest bid input
-
-  if ( bet_type == 0 ) { // call
-
-    player_money = player_money - highest_bet;
-
-		bet_amt = highest_bet;
-
-  } else if ( bet_type == 1 ) { // bet / raise
-
-    player_money = player_money - bet_amt;
-
-  }
+  player_money = player_money - bet_amt;
 
 	return bet_amt;
 
@@ -107,13 +89,6 @@ Hand Player::find_hand( std::vector<Card> table_cards ) const
   cards.insert(cards.end(), table_cards.begin(), table_cards.end());
 
 	std::sort(cards.begin(), cards.end(), [](Card a, Card b) { return a.number > b.number; } );
-
-
-	/* for (int i = 0; i < cards.size(); i++) {
-		std::cout << cards.at(i).number << " " << cards.at(i).suit << std::endl;
-	} */
-
-
 
   Hand best_hand; // best_hand is always returned
 
@@ -694,7 +669,6 @@ std::vector<float> Player::calc_postflop( std::vector<Card> table_cards )
 		distance1 = distance2;
 	}
 
-	std::cout << needed1 << " " << distance1 << std::endl;
 
 	if ( needed1 == 2 && distance1 == 4 )
 		return_probs.at(STRAIGHT) = 1.5;

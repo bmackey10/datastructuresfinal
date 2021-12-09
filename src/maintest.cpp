@@ -3,15 +3,34 @@
 #include <time.h>
 #include <vector>
 
-#include "deck.h"
-#include "player.h"
-//#include "probability.h"
+#include "../inc/player.h"
 
 #define COUT std::cout
 #define CIN std::cin
 #define smallblind 5
 #define bigblind 10
 #define ENDL std::endl
+
+bool same_bet( std::vector<int> player_bets )
+{
+for ( int i = 0; i < player_bets.size() - 1; ++i )
+{
+ if ( player_bets[i] != player_bets[i+1])
+   return false;
+}
+return true;
+}
+
+int highest_bet( std::vector<int> player_bets )
+{
+  int max = player_bets.at(0);
+  for ( int i = 1; i < player_bets.size(); ++i )
+    if ( player_bets.at(i) > max )
+      max = player_bets.at(i);
+
+  return max;
+}
+
 
 std::vector<Player> compare_hand( std::vector<Player> players ) {
 
@@ -67,20 +86,6 @@ std::vector<Player> compare_hand( std::vector<Player> players ) {
 
   }
 
-  for (long unsigned int iter = 0; iter < leaderboard.size(); iter++ ) {
-
-    std::cout << leaderboard.at(iter).player_num;
-
-		if (iter < (leaderboard.size() - 1)) {
-
-			std::cout << ", ";
-
-		}
-
-  }
-
-	std::cout << std::endl;
-
   return leaderboard;
 
 }
@@ -88,359 +93,642 @@ std::vector<Player> compare_hand( std::vector<Player> players ) {
 
 int main() {
 
-   int stillPlaying = 1;
-
-   while(stillPlaying == 1){
-
-
-   int users= 0, betamt= 0, pot = 0, highest_bet= 0;
+   int users= 0, betamt= 0, num_bet = 0, curr_bet = 0;
 
 //asks the user how many players
    COUT << "Enter the number of players that will be playing (there must be at least 3): ";
    CIN >> users; //equal to "player_num" in player class
-
+   COUT << ENDL;
 //instantiate that many players by creating a vector and pushing back as many users as entered
-   Player p;
    std::vector<Player> gameplayers;
    int i = 1;
    while (i <= users)
    {
-      Player p;
-      gameplayers.push_back(p(i));
+      Player p(i);
+      gameplayers.push_back(p);
       i++;
    }
 
 //initialize the deck
    Deck deck;
-   deck(); //default constructor
+
 //then shuffle it
    deck.shuffle();
 
 //assign two cards to each player
-   int i = 0;
+  i = 0;
    while(i < users){
-      gameplayers.p.at(i).player_cards.push_back(deck.deal_to_player());
-      gameplayers.p.at(i).player_cards.push_back(deck.deal_to_player());
+      gameplayers.at(i).player_cards.push_back(deck.deal_to_player());
+      gameplayers.at(i).player_cards.push_back(deck.deal_to_player());
       i++;
    }
 //print out cards
-   COUT<<"Now we will enter the first round of betting. To fold, type -1. To call, type 0.\n" ;
+   COUT<<"Now we will enter the first round of betting. To fold, type -1. To check, type -2." << ENDL << ENDL;
 
 //first round of betting
    i = 0;
-   COUT << "Player %d, you are the small blind. You will bet 5 chips to start the game." << (i+1);
-   //CIN >> betamt;
-   /* if(betamt == -1){
-      gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-      gameplayers.erase(std::next(gameplayers.begin() + i));
-   } */
-   p.at(i).bet(smallblind, 1, NULL);
-   highest_bet = smallblind;
+   COUT << "Player " << i + 1 << ", you are the small blind. You will bet 5 chips to start the game." << ENDL;
+   gameplayers.at(i).bet(smallblind);
    i++;
 
-   COUT << "Player %d, you are the big blind. You will bet 10 chips to double the small blind. " << (i+1); //assume user will bet twice as much
-   //CIN >> betamt;
-   /* if(betamt == -1){
-      gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-      gameplayers.erase(std::next(gameplayers.begin() + i));
-   } */
-   p.at(i).bet(bigblind, 1, NULL);
-   highest_bet = bigblind;
-   i++; //i now starts at player 3, where i = 2
+   COUT << "Player " << i + 1 << ", you are the big blind. You will bet 10 chips to double the small blind. " << ENDL << ENDL;
 
+   COUT << "\t\t Cards \t Money \t Hand \t Highest Cards" << ENDL;
+   i = 0;
+   while(i < 10){
+      COUT << "----------";
+      ++i;
+   }
+   COUT << ENDL;
 
-   while( i < users){
-      COUT << "Player %d, please enter how much you would like to bet: " << (i+1);
-      CIN >> betamt;
-//if fold
-      if(betamt == -1){
-         gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-         gameplayers.erase(std::next(gameplayers.begin() + i));
-      }
-//if bet amount is less than the big blind
-      if(betamt < highest_bet && betamt != 0){
-         COUT << "Invalid bet amount. Try again: ";
-         CIN >> betamt;
-      }
-//if bet amount is higher than the highest bet
-      if(betamt > highest_bet){
-         highest_bet = betamt;
-         p.at(i).bet(betamt, 1, NULL);
-         int j = 0;
-         while(j < i){
-            COUT << "Player %d" << (j+1) <<", please re-enter how much you would like to bet since player %d" << (i+1) << "raised the bet amount to %d: " << highest_bet;
-            CIN >> betamt;
-            if (betamt == -1) {
-               gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-               gameplayers.erase(std::next(gameplayers.begin() + i));
-            } else if(betamt < highest_bet && betamt != 0){
-               COUT << "Invalid bet amount. Try again: ";
-               CIN >> betamt;
-            } else if (bet_amt == 0 || bet_amt == highest_bet) {
-                p.at(i).bet(NULL, 0, highest_bet);
-            } else {
-               p.at(j).bet(betamt, 1, NULL);
-            }
-            j++;
-        }
-      }
-      if (bet_amt == 0 || bet_amt == highest_bet) {
-          p.at(i).bet(NULL, 0, highest_bet);
-      }
-      i++;
+   i = 1;
+
+   gameplayers.at(i).bet(bigblind);
+   i++;
+
+   for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+     gameplayers.at(iter).cur_hand = gameplayers.at(iter).find_hand( deck.table_cards );
    }
 
+   for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+     COUT << gameplayers.at(iter) << ENDL;
+  }
 
-//gets the pot amount
-   int numPlayers = gameplayers.size();
-   pot = highest_bet * numPlayers;
+  i = 0;
+  while(i < 10){
+     COUT << "----------";
+     ++i;
+  }
+  i = 0;
 
+  COUT << ENDL << "Pot: 15" << ENDL << ENDL;
+
+std::vector<int> player_bets (users, 0);
+int small_blind_print = 5;
+
+bool small_blind = true, big_blind = true;
+int index = 0;
+do {
+  if ( index == users )
+    index = 0;
+
+  if ( small_blind )
+  {
+    // player bets small_blind
+    player_bets.at(index) += 5;
+    small_blind = false;
+    deck.pot += 5;
+    ++index;
+    continue;
+  }
+
+  if ( big_blind )
+  {
+    // player bets big_blind
+    player_bets.at(index) += 10;
+    big_blind = false;
+    deck.pot += 10;
+    ++index;
+    continue;
+  }
+
+  COUT << "Player " << gameplayers.at(index).player_num <<  ", please enter how much you would like to bet: ";
+  CIN >> betamt;
+
+  if ( betamt == -1 )
+  {
+    COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has folded." << ENDL << ENDL;
+    gameplayers.erase(std::next(gameplayers.begin() + index - 1));
+    player_bets.erase(std::next(player_bets.begin() + index - 1));
+    users = users - 1;
+
+    continue;
+  }
+
+  if ( betamt == -2 && player_bets.at(index) == highest_bet(player_bets) )
+  {
+    COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has checked." << ENDL;
+    betamt = 0;
+  }
+
+  // only for ones w/ blinds
+  if ( index == 0 )
+    betamt += 5;
+  if ( index == 1 )
+    betamt += 10;
+
+  if ( betamt + player_bets.at(index) < highest_bet(player_bets) )
+  {
+    while ( betamt + player_bets.at(index) <  highest_bet(player_bets) ) {
+      COUT << "Invalid bet. Try again: ";
+      CIN >> betamt;
+    }
+  }
+
+  // only for ones w/ blinds
+  if ( index == 0 )
+    betamt -= 5;
+  if ( index == 1 )
+    betamt -= 10;
+
+  if ( index == 0 ) {
+    small_blind_print += betamt;
+  }
+
+  curr_bet = gameplayers.at(index).bet(betamt);
+
+  deck.pot += curr_bet;
+  player_bets.at(index) += curr_bet;
+
+  COUT << ENDL << "\tTotal Player Bets | ";
+
+  COUT << "Player " << gameplayers.at(0).player_num << ": " << small_blind_print << ", ";
+
+  for (long unsigned int iter = 1; iter < gameplayers.size(); iter ++ ) {
+    COUT << "Player " << gameplayers.at(iter).player_num << ": " << player_bets.at(iter);
+    if (iter != (gameplayers.size() - 1) ) {
+      COUT << ", ";
+    }
+  }
+
+  COUT << ENDL << ENDL;
+
+  ++index;
+} while ( !same_bet( player_bets ) );
 
 
 //after the first round of betting, three cards are laid out on the table
-   deck.table_cards.push_back(deck.at(0).deal_to_table());
-   deck.table_cards.push_back(deck.at(1).deal_to_table());
-   deck.table_cards.push_back(deck.at(2).deal_to_table());
+   deck.deal_to_table();
+   deck.deal_to_table();
+   deck.deal_to_table();
 
-
+  COUT << ENDL << "Now we will enter the second round of betting. To fold, type -1. To check, type -2." << ENDL << ENDL;
 
 //print out status
-   COUT << "\t Cards \t Money \t Hand \t Highest Cards \t Probability\n"
+   COUT << ENDL << "\t\t Cards \t Money \t Hand \t Highest Cards" << ENDL;
    i = 0;
-   while(i < 5){
+   while(i < 10){
       COUT << "----------";
+      ++i;
    }
-   COUT << "\n";
+   COUT << ENDL;
+
+   for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+     gameplayers.at(iter).cur_hand = gameplayers.at(iter).find_hand( deck.table_cards );
+   }
 
    i = 0;
    while ( i < users) {
-      COUT << p.at(i) << ENDL; //uses friend operator
-   }
-   COUT << deck << ENDL;
-
-
-COUT<<"Now we will enter the second round of betting. To fold, type -1. To call, type 0.\n" ;
-//then second round of betting; add check function (skips player and goes next by using continue in the if statement )
-   i =0;
-   while( i < users){
-      COUT << "Player %d, please enter how much you would like to bet: " << (i+1);
-      CIN >> betamt;
-//if fold
-      if(betamt == -1){
-         gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-         gameplayers.erase(std::next(gameplayers.begin() + i));
-      }
-//if bet amount is less than the big blind
-      if(betamt < highest_bet && betamt != 0){
-         COUT << "Invalid bet amount. Try again: ";
-         CIN >> betamt;
-      }
-//if bet amount is higher than the highest bet
-      if(betamt > highest_bet){
-         highest_bet = betamt;
-         p.at(i).bet(betamt, 1, NULL);
-         int j = 0;
-         while(j < i){
-            COUT << "Player %d" << (j+1) <<", please re-enter how much you would like to bet since player %d" << (i+1) << "raised the bet amount to %d: " << highest_bet;
-            CIN >> betamt;
-            if (betamt == -1) {
-               gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-               gameplayers.erase(std::next(gameplayers.begin() + i));
-            } else if(betamt < highest_bet && betamt != 0){
-               COUT << "Invalid bet amount. Try again: ";
-               CIN >> betamt;
-            } else if (bet_amt == 0 || bet_amt == highest_bet) {
-                p.at(i).bet(NULL, 0, highest_bet);
-            } else {
-               p.at(j).bet(betamt, 1, NULL);
-            }
-            j++;
+      COUT << gameplayers.at(i) << ENDL; //uses friend operator
+      std::vector<float> probs = gameplayers.at(i).calc_postflop( deck.table_cards );
+      COUT << "         | ";
+      for ( int i = 0; i < probs.size(); ++i )
+      {
+        if ( i == HIGH_CARD )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "High Card Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == PAIR )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Pair Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == TWO_PAIR )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Two Pair Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == THREE_OF_A_KIND )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Three of a Kind Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == STRAIGHT )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Straight Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FLUSH )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Flush Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FULL_HOUSE )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Full House Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FOUR_OF_A_KIND )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Four of a Kind Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == STRAIGHT_FLUSH )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Straight Flush Probability: " << probs.at(i) << "%  ";
+          }
         }
       }
-      if (bet_amt == 0 || bet_amt == highest_bet) {
-          p.at(i).bet(NULL, 0, highest_bet);
-      }
-      i++;
+      COUT << ENDL;
+      ++i;
    }
-   pot = pot + (highest_bet * numPlayers);
+   COUT << deck << ENDL << ENDL;
+
+for (int i = 0; i < player_bets.size(); ++i )
+{
+  player_bets.at(i) = 0;
+}
+
+index = 0;
+int counter = 0;
+do {
+  if ( index == users )
+    index = 0;
+
+  COUT << "Player " << gameplayers.at(index).player_num <<  ", please enter how much you would like to bet: ";
+  CIN >> betamt;
 
 
+  if ( betamt == -1 )
+  {
+    COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has folded." << ENDL << ENDL;
+    gameplayers.erase(std::next(gameplayers.begin() + index - 1));
+    player_bets.erase(std::next(player_bets.begin() + index - 1));
+    users = users - 1;
+
+    continue;
+  }
+
+  if ( betamt == -2 && player_bets.at(index) == highest_bet(player_bets) )
+  {
+    COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has checked." << ENDL;
+    betamt = 0;
+  }
 
 
-
-
-
-//then deal another card to the table
-   deck.table_cards.push_back(deck.at(3).deal_to_table());
-//then print out status
-   COUT << "\t Cards \t Money \t Hand \t Highest Cards \t Probability\n"
-   i = 0;
-   while(i < 5){
-      COUT << "----------";
-   }
-   COUT << "\n";
-
-   i = 0;
-   while ( i < users) {
-      COUT << p.at(i) << ENDL; //uses friend operator
-   }
-   COUT << deck << ENDL;
-
-
-
-//then another round of betting
-COUT<<"Now we will enter the third round of betting. To fold, type -1. To call, type 0.\n" ;
-//then second round of betting; add check function (skips player and goes next by using continue in the if statement )
-   i =0;
-   while( i < users){
-      COUT << "Player %d, please enter how much you would like to bet: " << (i+1);
+  if ( betamt + player_bets.at(index) < highest_bet(player_bets) )
+  {
+    while ( betamt + player_bets.at(index) <  highest_bet(player_bets) ) {
+      COUT << "Invalid bet. Try again: ";
       CIN >> betamt;
-//if fold
-      if(betamt == -1){
-         gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-         gameplayers.erase(std::next(gameplayers.begin() + i));
-      }
-//if bet amount is less than the big blind
-      if(betamt < highest_bet && betamt != 0){
-         COUT << "Invalid bet amount. Try again: ";
-         CIN >> betamt;
-      }
-//if bet amount is higher than the highest bet
-      if(betamt > highest_bet){
-         highest_bet = betamt;
-         p.at(i).bet(betamt, 1, NULL);
-         int j = 0;
-         while(j < i){
-            COUT << "Player %d" << (j+1) <<", please re-enter how much you would like to bet since player %d" << (i+1) << "raised the bet amount to %d: " << highest_bet;
-            CIN >> betamt;
-            if (betamt == -1) {
-               gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-               gameplayers.erase(std::next(gameplayers.begin() + i));
-            } else if(betamt < highest_bet && betamt != 0){
-               COUT << "Invalid bet amount. Try again: ";
-               CIN >> betamt;
-            } else if (bet_amt == 0 || bet_amt == highest_bet) {
-                p.at(i).bet(NULL, 0, highest_bet);
-            } else {
-               p.at(j).bet(betamt, 1, NULL);
-            }
-            j++;
-        }
-      }
-      if (bet_amt == 0 || bet_amt == highest_bet) {
-          p.at(i).bet(NULL, 0, highest_bet);
-      }
-      i++;
-   }
-   pot = pot + (highest_bet * numPlayers);
+    }
+  }
+
+
+    curr_bet = gameplayers.at(index).bet(betamt);
+
+    deck.pot += curr_bet;
+    player_bets.at(index) += curr_bet;
+
+  COUT << ENDL << "\tTotal Player Bets | ";
+
+  for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+    COUT << "Player " << gameplayers.at(iter).player_num << ": " << player_bets.at(iter);
+    if (iter != (gameplayers.size() - 1) ) {
+      COUT << ", ";
+    }
+  }
+
+  COUT << ENDL << ENDL;
+
+  ++counter;
+  ++index;
+} while ( !same_bet( player_bets ) || counter < users);
 
 //deal another card to the table
-   deck.table_cards.push_back(deck.at(4).deal_to_table());
+   deck.deal_to_table(); // Turn
+
+   COUT << ENDL <<"Now we will enter the third round of betting. To fold, type -1. To check, type -2." << ENDL << ENDL;
 //print out status
-   COUT << "\t Cards \t Money \t Hand \t Highest Cards \t Probability\n"
+   COUT << ENDL << "\t\t Cards \t Money \t Hand \t Highest Cards" << ENDL;
    i = 0;
-   while(i < 5){
+   while(i < 10){
       COUT << "----------";
+      ++i;
    }
-   COUT << "\n";
+   COUT << ENDL;
+
+   for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+     gameplayers.at(iter).cur_hand = gameplayers.at(iter).find_hand( deck.table_cards );
+   }
 
    i = 0;
    while ( i < users) {
-      COUT << p.at(i) << ENDL; //uses friend operator
-   }
-   COUT << deck << ENDL;
-
-
-
-
-//final round of betting
-COUT<<"Now we will enter the last round of betting. To fold, type -1. To call, type 0.\n" ;
-//then second round of betting; add check function (skips player and goes next by using continue in the if statement )
-   i =0;
-   while( i < users){
-      COUT << "Player %d, please enter how much you would like to bet: " << (i+1);
-      CIN >> betamt;
-//if fold
-      if(betamt == -1){
-         gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-         gameplayers.erase(std::next(gameplayers.begin() + i));
-      }
-//if bet amount is less than the big blind
-      if(betamt < highest_bet && betamt != 0){
-         COUT << "Invalid bet amount. Try again: ";
-         CIN >> betamt;
-      }
-//if bet amount is higher than the highest bet
-      if(betamt > highest_bet){
-         highest_bet = betamt;
-         p.at(i).bet(betamt, 1, NULL);
-         int j = 0;
-         while(j < i){
-            COUT << "Player %d" << (j+1) <<", please re-enter how much you would like to bet since player %d" << (i+1) << "raised the bet amount to %d: " << highest_bet;
-            CIN >> betamt;
-            if (betamt == -1) {
-               gameplayers.p.at(i).fold( gameplayers.p.at(i).player_cards, gameplayers.p.at(i).player_num ); //erases players from that index
-               gameplayers.erase(std::next(gameplayers.begin() + i));
-            } else if(betamt < highest_bet && betamt != 0){
-               COUT << "Invalid bet amount. Try again: ";
-               CIN >> betamt;
-            } else if (bet_amt == 0 || bet_amt == highest_bet) {
-                p.at(i).bet(NULL, 0, highest_bet);
-            } else {
-               p.at(j).bet(betamt, 1, NULL);
-            }
-            j++;
+      COUT << gameplayers.at(i) << ENDL; //uses friend operator
+      std::vector<float> probs = gameplayers.at(i).calc_postturn( deck.table_cards );
+      COUT << "         | ";
+      for ( int i = 0; i < probs.size(); ++i )
+      {
+        if ( i == HIGH_CARD )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "High Card Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == PAIR )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Pair Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == TWO_PAIR )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Two Pair Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == THREE_OF_A_KIND )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Three of a Kind Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == STRAIGHT )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Straight Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FLUSH )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Flush Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FULL_HOUSE )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Full House Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == FOUR_OF_A_KIND )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Four of a Kind Probability: " << probs.at(i) << "%  ";
+          }
+        }
+        if ( i == STRAIGHT_FLUSH )
+        {
+          if ( probs.at(i) != 0 )
+          {
+            COUT << "Straight Flush Probability: " << probs.at(i) << "%  ";
+          }
         }
       }
-      if (bet_amt == 0 || bet_amt == highest_bet) {
-          p.at(i).bet(NULL, 0, highest_bet);
-      }
-      i++;
+      COUT << ENDL;
+      ++i;
    }
-   pot = pot + (highest_bet * numPlayers);
+   COUT << deck << ENDL << ENDL;
+
+   for (int i = 0; i < player_bets.size(); ++i )
+   {
+     player_bets.at(i) = 0;
+   }
+
+   index = 0;
+   counter = 0;
+   do {
+     if ( index == users )
+       index = 0;
+
+     COUT << "Player " << gameplayers.at(index).player_num <<  ", please enter how much you would like to bet: ";
+     CIN >> betamt;
+
+     if ( betamt == -1 )
+     {
+       COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has folded." << ENDL << ENDL;
+       gameplayers.erase(std::next(gameplayers.begin() + index - 1));
+       player_bets.erase(std::next(player_bets.begin() + index - 1));
+       users = users - 1;
+
+       continue;
+     }
+
+     if ( betamt == -2 && player_bets.at(index) == highest_bet(player_bets) )
+     {
+       COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has checked." << ENDL;
+       betamt = 0;
+     }
+
+     if ( betamt + player_bets.at(index) < highest_bet(player_bets) )
+     {
+       while ( betamt + player_bets.at(index) <  highest_bet(player_bets) ) {
+         COUT << "Invalid bet. Try again: ";
+         CIN >> betamt;
+       }
+     }
+
+       curr_bet = gameplayers.at(index).bet(betamt);
+
+       deck.pot += curr_bet;
+       player_bets.at(index) += curr_bet;
+
+     COUT << ENDL << "\tTotal Player Bets | ";
+
+     for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+       COUT << "Player " << gameplayers.at(iter).player_num << ": " << player_bets.at(iter);
+       if (iter != (gameplayers.size() - 1) ) {
+         COUT << ", ";
+       }
+     }
+
+     COUT << ENDL << ENDL;
+
+     ++counter;
+     ++index;
+   } while ( !same_bet( player_bets ) || counter < users);
+
+   COUT << ENDL <<"Now we will enter the fourth and final round of betting. To fold, type -1. To check, type -2." << ENDL << ENDL;
 
 //print out status
-   COUT << "\t Cards \t Money \t Hand \t Highest Cards \t Probability\n"
+   COUT << ENDL << "\t\t Cards \t Money \t Hand \t Highest Cards \t Probability" << ENDL;
    i = 0;
-   while(i < 5){
+   while(i < 10){
       COUT << "----------";
+      ++i;
    }
-   COUT << "\n";
+   COUT << ENDL;
+
+   for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+     gameplayers.at(iter).cur_hand = gameplayers.at(iter).find_hand( deck.table_cards );
+   }
 
    i = 0;
    while ( i < users) {
-      COUT << p.at(i) << ENDL; //uses friend operator
+      COUT << gameplayers.at(i) << ENDL; //uses friend operator
+      ++i;
    }
-   COUT << deck << ENDL;
+
+  deck.deal_to_table();
+
+  COUT << deck << ENDL << ENDL; // River
+
+  for (int i = 0; i < player_bets.size(); ++i )
+  {
+    player_bets.at(i) = 0;
+  }
+
+  for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+    gameplayers.at(iter).cur_hand = gameplayers.at(iter).find_hand( deck.table_cards );
+  }
+
+  index = 0;
+  counter = 0;
+  do {
+    if ( index == users )
+      index = 0;
+
+    COUT << "Player " << gameplayers.at(index).player_num <<  ", please enter how much you would like to bet: ";
+    CIN >> betamt;
+
+    if ( betamt == -1 )
+    {
+      COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has folded." << ENDL << ENDL;
+      gameplayers.erase(std::next(gameplayers.begin() + index - 1));
+      player_bets.erase(std::next(player_bets.begin() + index - 1));
+      users = users - 1;
+
+      continue;
+    }
+
+    if ( betamt == -2 && player_bets.at(index) == highest_bet(player_bets) )
+    {
+      COUT << ENDL << "\tPlayer " << gameplayers.at(index).player_num << " has checked." << ENDL;
+      betamt = 0;
+    }
+
+
+    if ( betamt + player_bets.at(index) < highest_bet(player_bets) )
+    {
+      while ( betamt + player_bets.at(index) <  highest_bet(player_bets) ) {
+        COUT << "Invalid bet. Try again: ";
+        CIN >> betamt;
+      }
+    }
+
+    curr_bet = gameplayers.at(index).bet(betamt);
+
+    deck.pot += curr_bet;
+    player_bets.at(index) += curr_bet;
+
+    COUT << ENDL << "\tTotal Player Bets | ";
+
+    for (long unsigned int iter = 0; iter < gameplayers.size(); iter ++ ) {
+      COUT << "Player " << gameplayers.at(iter).player_num << ": " << player_bets.at(iter);
+      if (iter != (gameplayers.size() - 1) ) {
+        COUT << ", ";
+      }
+    }
+
+    COUT << ENDL << ENDL;
+
+    ++counter;
+    ++index;
+  } while ( !same_bet( player_bets ) || counter < users);
 
    std::vector<Player> leaderboard;
 
    leaderboard = compare_hand( gameplayers );
+   Player temp(0);
+
+   COUT << ENDL;
+
+   int index_1 = 0;
+   int index_2 = 0;
+
+   if ( leaderboard.at(0).cur_hand.the_rank  == leaderboard.at(1).cur_hand.the_rank &&
+      leaderboard.at(0).cur_hand.first == leaderboard.at(1).cur_hand.first &&
+      leaderboard.at(0).cur_hand.second == leaderboard.at(1).cur_hand.second) {
+
+      gameplayers.at(leaderboard.at(0).player_num - 1).player_money += deck.get_pot() / 2;
+      gameplayers.at(leaderboard.at(1).player_num - 1).player_money += deck.get_pot() / 2;
+
+      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << " and Player " <<
+        gameplayers.at(leaderboard.at(1).player_num - 1).player_num << " are tied as winners. Their best hand is " << "\e[1m" <<
+        temp.enum_to_string_rank(gameplayers.at(leaderboard.at(0).player_num - 1).cur_hand.the_rank) << "\e[0m" <<
+        ", and their first and second best cards are the " << "\e[1m";
+
+      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number > 10) {
+        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
+      } else {
+        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
+      }
+
+      COUT << "\e[0m" << " and the " << "\e[1m" ;
+
+      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number > 10) {
+        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
+      } else {
+        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
+      }
+
+      COUT << "\e[0m" << "." << ENDL;
+
+      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
+        gameplayers.at(leaderboard.at(0).player_num - 1).player_money << " and Player " << gameplayers.at(leaderboard.at(1).player_num - 1).player_num << "'s total money is now " <<
+        gameplayers.at(leaderboard.at(1).player_num - 1).player_money << "." << ENDL << ENDL;
+
+    } else {
+
+      gameplayers.at(leaderboard.at(0).player_num - 1).player_money += deck.get_pot();
+
+      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << " won. Their best hand is " << "\e[1m" <<
+        temp.enum_to_string_rank(gameplayers.at(leaderboard.at(0).player_num - 1).cur_hand.the_rank) << "\e[0m" <<
+        ", and their first and second best cards are the " << "\e[1m";
+
+      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number > 10) {
+        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
+      } else {
+        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
+      }
+
+      COUT << "\e[0m" << " and the " << "\e[1m" ;
+
+      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number > 10) {
+        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
+      } else {
+        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
+      }
+
+      COUT << "\e[0m" << "." << ENDL;
+
+      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
+        gameplayers.at(leaderboard.at(0).player_num - 1).player_money << "." << ENDL << ENDL;
+
+      }
 
 //end of game
-   COUT << "This is the end of the game. Great game everyone!!!";
+   COUT << "This is the end of the game. Great game everyone!!!" << ENDL;
 
-   //ask user if they want to play another game
-   char another;
-   COUT<< "Would you like to play another game? Type y or n: "; //need to reset varubales and rotate the small blind/big blind vector
-   CIN >> another;
-
-   if(another == 'n'){
-      stillPlaying = 0;
-   }
-   else(){
-      //rotate the vector for the blinds
-      i = 0;
-      Player temp = p.at(0);
-      while(i < users -1){
-         p.at(i) = p.at(i+1);
-         i++;
-      }
-      p.at(users) = temp;
-   }//end of else loop
-
-   }//end of while loop
+   deck.reset_pot();
 
    return 0;
 
-}//end of main
+}
