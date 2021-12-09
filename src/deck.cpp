@@ -1,3 +1,8 @@
+// Names: Connor Ding, Brooke Mackey, Tara Flannery, Thomas Mercurio
+// Emails: cding2@nd.edu, bmackey@nd.edu, tflanne2@nd.edu, tmercuri@nd.edu
+// File Name: deck.cpp
+// File Contents: Contains the Deck class method definitions.
+
 #include "../inc/deck.h"
 
 std::string Deck::enum_to_string_card(int type) const {

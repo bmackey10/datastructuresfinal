@@ -1,3 +1,8 @@
+// Names: Connor Ding, Brooke Mackey, Tara Flannery, Thomas Mercurio
+// Emails: cding2@nd.edu, bmackey@nd.edu, tflanne2@nd.edu, tmercuri@nd.edu
+// File Name: deck.h
+// File Contents: Contains the Card struct declaration and the Deck class declaration.
+
 #ifndef DECK_H
 #define DECK_H
 

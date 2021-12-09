@@ -1,3 +1,8 @@
+// Names: Connor Ding, Brooke Mackey, Tara Flannery, Thomas Mercurio
+// Emails: cding2@nd.edu, bmackey@nd.edu, tflanne2@nd.edu, tmercuri@nd.edu
+// File Name: player.cpp
+// File Contents: Contains the Deck class method definitions.
+
 #include "../inc/player.h"
 
 std::string Player::enum_to_string_rank(rank type) const {

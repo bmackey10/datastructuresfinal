@@ -1,3 +1,8 @@
+// Names: Connor Ding, Brooke Mackey, Tara Flannery, Thomas Mercurio
+// Emails: cding2@nd.edu, bmackey@nd.edu, tflanne2@nd.edu, tmercuri@nd.edu
+// File Name: maintest.cpp
+// File Contents: Contains the Poker simulation that will run from terminal.
+
 #include <iostream>
 #include <cstdlib>
 #include <time.h>

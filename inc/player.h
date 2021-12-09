@@ -1,3 +1,9 @@
+// Names: Connor Ding, Brooke Mackey, Tara Flannery, Thomas Mercurio
+// Emails: cding2@nd.edu, bmackey@nd.edu, tflanne2@nd.edu, tmercuri@nd.edu
+// File Name: player.h
+// File Contents: Contains the constant probability vectors, the rank enumerated type,
+// the Hand struct declaration, and the Player class declaration.
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -58,7 +64,7 @@ class Player {
     Player ( int i );
 
     int bet ( int bet_amt );
-		
+
     std::vector<Card> get_player_cards () const;
 
 		std::string enum_to_string_rank(rank type) const;
