@@ -676,28 +676,10 @@ do {
       gameplayers.at(leaderboard.at(1).player_num - 1).player_money += deck.get_pot() / 2;
 
       COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << " and Player " <<
-        gameplayers.at(leaderboard.at(1).player_num - 1).player_num << " are tied as winners. Their best hand is " << "\e[1m" <<
-        temp.enum_to_string_rank(gameplayers.at(leaderboard.at(0).player_num - 1).cur_hand.the_rank) << "\e[0m" <<
-        ", and their first and second best cards are the " << "\e[1m";
-
-      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number > 10) {
-        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
-      } else {
-        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
-      }
-
-      COUT << "\e[0m" << " and the " << "\e[1m" ;
-
-      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number > 10) {
-        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
-      } else {
-        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
-      }
-
-      COUT << "\e[0m" << "." << ENDL;
-
-      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
-        gameplayers.at(leaderboard.at(0).player_num - 1).player_money << " and Player " << gameplayers.at(leaderboard.at(1).player_num - 1).player_num << "'s total money is now " <<
+        gameplayers.at(leaderboard.at(1).player_num - 1).player_num << " are tied as winners." << ENDL << "Player " <<
+        gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
+        gameplayers.at(leaderboard.at(0).player_num - 1).player_money << " and Player " <<
+        gameplayers.at(leaderboard.at(1).player_num - 1).player_num << "'s total money is now " <<
         gameplayers.at(leaderboard.at(1).player_num - 1).player_money << "." << ENDL << ENDL;
 
     } else {
@@ -706,25 +688,7 @@ do {
 
       COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << " won. Their best hand is " << "\e[1m" <<
         temp.enum_to_string_rank(gameplayers.at(leaderboard.at(0).player_num - 1).cur_hand.the_rank) << "\e[0m" <<
-        ", and their first and second best cards are the " << "\e[1m";
-
-      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number > 10) {
-        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
-      } else {
-        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(0).suit);
-      }
-
-      COUT << "\e[0m" << " and the " << "\e[1m" ;
-
-      if (gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number > 10) {
-        COUT << temp.enum_to_string_card(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number) << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
-      } else {
-        COUT << gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).number << " of " << temp.enum_to_string_suit(gameplayers.at(leaderboard.at(0).player_num - 1).player_cards.at(1).suit);
-      }
-
-      COUT << "\e[0m" << "." << ENDL;
-
-      COUT << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
+        ". " << ENDL << "Player " << gameplayers.at(leaderboard.at(0).player_num - 1).player_num << "'s total money is now " <<
         gameplayers.at(leaderboard.at(0).player_num - 1).player_money << "." << ENDL << ENDL;
 
       }
